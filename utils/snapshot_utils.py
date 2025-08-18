@@ -129,10 +129,7 @@ class Read_Snapshot:
         return node_features
         
     def read_tms(self, tm_filename, priority):
-        if not self.props.topo == "abilene":
-            file = open(f"{self.parent_dir_path}/../scratch/harp_mc/traffic_matrices/{self.topo}_{priority}/{tm_filename}", 'rb')
-        else:
-            file = open(f"{self.parent_dir_path}/traffic_matrices/{self.topo}_{priority}/{tm_filename}", 'rb')
+        file = open(f"{self.parent_dir_path}/traffic_matrices/{self.topo}_{priority}/{tm_filename}", 'rb')
         tm = pickle.load(file)
         tm = tm.reshape(-1, 1)
         if self.props.framework == "hattrick":
@@ -146,10 +143,7 @@ class Read_Snapshot:
         return tm
     
     def read_tms_pred(self, tm_filename, priority, pred_type):
-        if not self.props.topo == "abilene":
-            file = open(f"{self.parent_dir_path}/../scratch/harp_mc/traffic_matrices/{self.topo}_{priority}_{pred_type}/{tm_filename}", 'rb')
-        else:
-            file = open(f"{self.parent_dir_path}/traffic_matrices/{self.topo}_{priority}_{pred_type}/{tm_filename}", 'rb')
+        file = open(f"{self.parent_dir_path}/traffic_matrices/{self.topo}_{priority}_{pred_type}/{tm_filename}", 'rb')
         tm = pickle.load(file)
         tm = tm.reshape(-1, 1)
         tm = tm + 1e-7
