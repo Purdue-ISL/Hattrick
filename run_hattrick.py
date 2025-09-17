@@ -192,10 +192,8 @@ elif props.mode.lower() == "test": #test
     test_dataset.padded_edge_ids_per_path = test_dataset.padded_edge_ids_per_path.to(device)
     move_to_device(test_dataset.edge_ids_dict_tensor, props.device)
     move_to_device(test_dataset.original_pos_edge_ids_dict_tensor, props.device)
-
-    model = torch.load(f"abilene_7_7_7.pkl", map_location=device)
     
-    # model = torch.load(f"hattrick_{props.topo}_{props.num_paths_per_pair}sp.pkl", map_location=device)
+    model = torch.load(f"hattrick_{props.topo}_{props.num_paths_per_pair}sp.pkl", map_location=device)
     model = model.to(dtype=props.dtype)
     model.eval()
     runtimes = open(f"results/{props.topo}/{props.num_paths_per_pair}sp/{cluster}/hattrick_runtime.txt", "w")

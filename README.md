@@ -3,8 +3,8 @@
 
 If you use this code, please cite:
 ```
-@inproceedings{Hattrick,
-author = {AlQiam, Abd AlRhman and Li, Zhoucong and Ahuja, Satyajeet Singh and Wang, Zhaodong and Zhang, Ying and Rao, Sanjay G. and Ribeiro, Bruno and Tawarmalani, Mohit},
+@inproceedings{10.1145/3718958.3750470,
+author = {AlQiam, Abd AlRhman and Li, Zhuocong and Ahuja, Satyajeet Singh and Wang, Zhaodong and Zhang, Ying and Rao, Sanjay G. and Ribeiro, Bruno and Tawarmalani, Mohit},
 title = {Hattrick: Solving Multi-Class TE using Neural Models},
 year = {2025},
 isbn = {9798400715242},
@@ -13,13 +13,13 @@ address = {New York, NY, USA},
 url = {https://doi.org/10.1145/3718958.3750470},
 doi = {10.1145/3718958.3750470},
 booktitle = {Proceedings of the ACM SIGCOMM 2025 Conference},
-pages = {xx-yy},
+pages = {264–278},
 numpages = {15},
 keywords = {traffic engineering, wide-area networks, network optimization, machine learning},
-location = {Coimbra, Portugal},
-series = {ACM SIGCOMM '25}
-}
+location = {S\~{a}o Francisco Convent, Coimbra, Portugal},
+series = {SIGCOMM '25}}
 ```
+
 Please contact `aalqiam@purdue.edu` for any questions.
 ### Environment Used
 Hattrick was tested using the following setup:
@@ -28,6 +28,7 @@ Hattrick was tested using the following setup:
 - `torch==2.5.1+cu124`
 - `torch-scatter==2.1.2+pt25cu124`
 - Check the rest in requirements.txt
+
 ### Required Libraries
 1. Install the required Python packages as listed in the requirements.txt. Use:
    `pip3 install -r requirements.txt`
@@ -35,38 +36,45 @@ Hattrick was tested using the following setup:
 3. Identify and copy the link of a suitable [URL](https://data.pyg.org/whl/) depending on PyTorch and CUDA/CPU versions installed in the previous step. Then, run:
    - `pip install --no-index torch-scatter -f [URL]`
 4. Follow [Gurobi Website](https://www.gurobi.com/) to install and setup Gurobi Optimizer.
-      
-### How to Use Hattrick
-- In the `manifest` folder, The user should provide a `txt` file that holds the topology name and describes at every time step the **topology_file.json**,**set_of_pairs_file.pkl**,**traffic_matrix.pkl** file that will be read at that time step. For every timestep, a corresponding file of these three should exist in the `topologies`, `pairs`, and `traffic_matrices` folders inside a directory with the topology name. 
-- For details on the data format, please check [Data Format](#data-format)
-- To compute optimal values and cluterize your dataset, run:
-   - Please refer to the `run_gur.sh` file, and carefully read the comments there.
-   - Please refer to our [HARP](https://dl.acm.org/doi/10.1145/3651890.3672237) paper to check the definition of a "cluster" in this context.
 
- - To train, run (for example):
+## Steps to run Hattrick
+1. Prepare your data in the format Hattrick accepts. Please check [Data Format](#data-format). 
+2. Generate predicted traffic matrices. Please check [General Notes](#general-notes) and [Predicted Matrices Format](#working-with-predicted-matrices).
+3. Compute optimal MaxFlow and MLU values. Please check [How to use Gurobi](#how-to-compute-optimal-values-using-gurobi).
+4. Train and test a `Hattrick` model. Please check [Training Hattrick](#how-to-train-and-test-hattrick).
+
+### How to compute optimal values using Gurobi
+- To compute optimal values and cluterize your dataset:
+   - Please refer to the `run_gur.sh` file, and carefully read the comments there.
+   - Please refer to our [HARP](https://dl.acm.org/doi/10.1145/3651890.3672237) paper and check the definition of a "cluster" in this context.
+
+### How to train and test `Hattrick`:
+ - To train `Hattrick`, run (for example):
    - ``python3 run_hattrick.py --topo topo_name --mode train --epochs 60 --batch_size 64 --num_paths_per_pair 4 --num_transformer_layers 3 --num_gnn_layers 3 --num_mlp1_hidden_layers 2 --num_mlp2_hidden_layers 2 --rau1 3 --rau2 3 --rau3 3 --train_clusters 0 --train_start_indices 0 --train_end_indices 12096 --val_clusters 0 --val_start_indices 12096 --val_end_indices 14122 --pred 1 --dynamic 0 --lr 0.0005 --pred_type esm --initial_training 1 --violation 1``
    - ``python3 run_hattrick.py --topo topo_name --mode train --epochs 60 --batch_size 64 --num_paths_per_pair 15 --num_transformer_layers 3 --num_gnn_layers 4 --num_mlp1_hidden_layers 4 --num_mlp2_hidden_layers 4 --rau1 20 --rau2 15 --rau3 15 --train_clusters 0 1 2 --train_start_indices 0 0 0 --train_end_indices 3000 3000 3000 --val_clusters 3 4 --val_start_indices 0 0 --val_end_indices 1000 1000 --pred 1 --dynamic 1 --lr 0.0005 --pred_type esm --initial_training 1 --violation 1``
 
-- To test, run (for example):
+- To test `Hattrick`, run (for example):
   - ``python3 run_hattrick.py --topo abilene --test_start_idx 14112 --test_end_idx 16128 --test_cluster 0 --mode test --num_paths_per_pair 4 --rau1 3 --rau2 3 --rau3 3 --pred 1 --dynamic 0 --pred_type esm --sim_mf_mlu 1``
   - Testing can only be done a cluster at a run. Employ a for loop to test various clusters of a dataset.
 
 - For further explanation on command line arguments, see [Command Line Arguments Explanation](#command-line-arguments-explanation)
 
-### Working with Public Datasets (Abilene and GEANT):
+### Working with Public Datasets:
 - **NOTE**: We did not use Hattrick with Abilene.
 - Download `AbileneTM-all.tar` from this [link](https://www.cs.utexas.edu/~yzhang/research/AbileneTM/) and decompress it (twice) inside ``prepare_abilene`` folder.
    - `cd prepare_abilene`
    - `wget https://www.cs.utexas.edu/~yzhang/research/AbileneTM/AbileneTM-all.tar`
    - `tar -xvf AbileneTM-all.tar`
    - `gunzip *.gz`
-   - Then, run ``python3 prepare_abilene_harp.py``
+   - Then, run ``python3 prepare_abilene_hattrick.py``
    - This example should serve as a reference on how to prepare any dataset.
-- A preprocessed copy of the GEANT dataset in the format needed by Hattrick is available on this [link](https://app.box.com/s/shzgaxnt36org6dmu9q228kzk28numue)
-- A preprocessed copy of the KDL dataset in the format needed by Hattrick is available on this [link](https://drive.google.com/file/d/1dZLhpgJ1ZcjzsZsPZwbTr0t2_Fkz_8oP/view)
-- The matrices for GEANT and KDL are for a single class of traffic. You need to split it. Look at preparing Abilene script for  a possible way of doing it.
+- A preprocessed copy of the **KDL** matrices in the format needed by Hattrick is available on this [link](https://app.box.com/s/8r9w2txtnjxj1g09yhru5oxf676ygulm).
+- A preprocessed copy of the **UsCarrier** matrices in the format needed by Hattrick is available on this [link](https://app.box.com/s/c1m97gblyglwj7qrftgqrbttwz3h6mns).
+- A preprocessed copy of the **GEANT** matrices in the format needed by Hattrick is available on this [link](https://app.box.com/s/shzgaxnt36org6dmu9q228kzk28numue).
+- The matrices for GEANT a single class of traffic. You need to split it. Look at preparing Abilene script for a possible way of doing it.
 
 ### Data Format:
+- In the `manifest` folder, The user should provide a `txt` file that holds the topology name and describes at every time step the **topology_file.json**,**set_of_pairs_file.pkl**,**traffic_matrix.pkl** file that will be read at that time step. For every timestep, a corresponding file of these three should exist in the `topologies`, `pairs`, and `traffic_matrices` folders inside a directory with the topology name.
 - **Traffic matrices**: Numpy array of shape (num_pairs, 1)
   - high-class traffic goes into `topo_name_1`
   - medium-class traffic goes into `topo_name_2`
@@ -111,7 +119,6 @@ Hattrick was tested using the following setup:
   - Pick it to be 1000-10000x times less than the minimum non-zero capacity.
 - meta_learning [0, 1]: Turn on/off meta learning. This is used to train Hattrick on geant dataset for a couple of epochs before training it on the desired dataset.
   - This is generally useful, but specifically when the network/dataset is highly dynamic with lots of failures, where Hattrick might struggle to/not converge. Meta-learning significantly improves the convergence.
-  - 
 - priority [1, 2, 3]: used to indicate stage of optimization or class of traffic.
 - checkpoint [0, 1, 2]: Used to control gradient checkpointing (GC) for Hattrick.
   - This is very useful to reduce the memory footprint of Hattrick.
@@ -123,7 +130,7 @@ Hattrick was tested using the following setup:
 - initial_training [0, 1]: Turns on/off model checkpointing for Hattrick. Hattrick checkpoints the model and optimizer after every epoch. Set it to 1 to continue training from the last epoch.
   - This is useful if you use a shared cluster of GPUs where you have a maximum number of hours per job.
 
-### General Notes
+### General Notes:
 - The learning rate is a very important hyperparameter. For the KDL topology, we had to use a high learning rate (0.05)
 - An ESM (Exponential smoothing) predictor is provided in `traffic_matrices` directory
   - To use it, run: python3 esm_predictor.py topo_name
