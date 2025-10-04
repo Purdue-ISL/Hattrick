@@ -39,15 +39,16 @@ Hattrick was tested using the following setup:
    - Please check the `Setup_Gurobi.md` file to see the steps needed to setup Gurobi.
 
 ## Steps to run Hattrick
-1. Prepare your data in the format Hattrick accepts. Please check [Data Format](#data-format). 
+1. Prepare your data (topologies, pairs, traffic matrices, and manifest) in the format Hattrick accepts. Please check [Data Format](#data-format). 
 2. Generate predicted traffic matrices. Please check [Predicted Matrices Format and Generation](#predicted-matrices-format-and-generation).
 3. Compute optimal MaxFlow and MLU values. Please check [How to use Gurobi](#how-to-compute-optimal-values-using-gurobi).
 4. Train and test a `Hattrick` model. Please check [Training Hattrick](#how-to-train-and-test-hattrick).
 
 ### How to compute optimal values using Gurobi
 - To compute optimal values and cluster your dataset:
-   - Please refer to the `run_gur.sh` file, and carefully read the comments there.
-   - Please refer to our [HARP](https://dl.acm.org/doi/10.1145/3651890.3672237) paper and check the definition of a "cluster" in this context.
+  - Please refer to the `run_gur.sh` file, and carefully read the comments there.
+  - Please refer to our [HARP](https://dl.acm.org/doi/10.1145/3651890.3672237) paper and check the definition of a "cluster" in this context.
+  - Please check the `Setup_Gurobi.md` file to see the steps needed to setup Gurobi.
 
 ### How to train and test `Hattrick`:
  - To train `Hattrick`, run (for example):
